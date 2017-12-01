@@ -1,22 +1,19 @@
 ---
 
 - name: "{{ test }}"
-  hosts: debian.jessie
+  hosts: debian
   become: true
   pre_tasks:
+    - include: pre_tasks/dotdeb_wheezy_56.yml
+      when: ansible_distribution_release == 'wheezy'
     - include: pre_tasks/sury_php.yml
+      when: ansible_distribution_release != 'wheezy'
     - apt:
         package: "{{ item }}"
         install_recommends: false
       with_items:
-        - php7.1-fpm
+        - "{{ (ansible_distribution_release == 'wheezy')|ternary('php5-fpm','php5.6-fpm') }}"
     - include: pre_tasks/manala.yml
-    - copy:
-        dest: /etc/apt/preferences.d/phpredisadmin
-        content: |
-          Package:      phpredisadmin*
-          Pin:          origin debian.manala.io
-          Pin-Priority: 900
   roles:
     - manala.phpredisadmin
   post_tasks:

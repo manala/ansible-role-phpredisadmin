@@ -1,7 +1,7 @@
 ---
 
 - name: "{{ test }}"
-  hosts: debian.jessie
+  hosts: debian:!debian.wheezy
   become: true
   pre_tasks:
     - include: pre_tasks/sury_php.yml
@@ -9,14 +9,8 @@
         package: "{{ item }}"
         install_recommends: false
       with_items:
-        - php5.6-fpm
+        - php7.2-fpm
     - include: pre_tasks/manala.yml
-    - copy:
-        dest: /etc/apt/preferences.d/phpredisadmin
-        content: |
-          Package:      phpredisadmin*
-          Pin:          origin debian.manala.io
-          Pin-Priority: 900
   roles:
     - manala.phpredisadmin
   post_tasks:
